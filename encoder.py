@@ -2,7 +2,7 @@ import os, shutil
 from PIL import Image
 from imageutils import ImageManager, ImageBuilder
 
-MAX_IMGS = 4
+MAX_IMGS = 20
 
 class Encoder:
     def __init__(self, path: str, size: tuple[int, int]) -> None:
