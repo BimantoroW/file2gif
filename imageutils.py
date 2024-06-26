@@ -1,5 +1,6 @@
 import math
 from PIL import Image
+from typing import Callable
 
 class CoordinateIterator:
     def __init__(self, size: tuple[int, int]) -> None:
@@ -65,18 +66,21 @@ class ImageReader:
         return self.iterator.has_next()
 
 class ImageManager:
-    def __init__(self, size: tuple[int, int], savepath: str) -> None:
+    def __init__(self, size: tuple[int, int], max_imgs: int, on_full: Callable[[list[Image.Image]], None]) -> None:
         self.size = size
-        self.savepath = savepath
+        self.max_imgs = max_imgs
+        self.on_full = on_full
         self.img_builder = ImageBuilder(size)
-        self.count = 0
+        self.imgs = []
     
     def write(self, data: bytes) -> None:
         if not self.img_builder.has_next():
             self.save_and_reset()
         self.img_builder.write(data)
     
-    def save_and_reset(self):
+    def save_and_reset(self, save_list=False):
         img = self.img_builder.build()
-        img.save(f'{self.savepath}/{self.count}.png')
-        self.count += 1
+        self.imgs.append(img)
+        if len(self.imgs) >= self.max_imgs or save_list:
+            self.on_full(self.imgs)
+            self.imgs.clear()

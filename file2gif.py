@@ -15,5 +15,5 @@ if __name__ == '__main__':
         size = sys.argv[2]
         size = size.split('x')
         size = (int(size[0]), int(size[1]))
-        enc = Encoder(size)
-        enc.encode(path)
+        enc = Encoder(path, size)
+        enc.encode()
